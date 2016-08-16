@@ -15,6 +15,7 @@ module.exports = ip_filter;
  * Initialize ip filer middleware with the given `opts`:
  *
  * - `db` redis connection instance
+ * - `id` id to compare requests [ (ctx) => (return ctx.ip) ]
  * - `duration` blacklist duration in milliseconds [24 hour]
  * - `errorMsgPermanent` text in body of error response for permanent blacklisting ['Permanently blacklisted']
  * - `errorMsgRetry` text in body of error response for limited blacklisting (limited for `duration`) ['Blacklisted, retry in ']
@@ -26,6 +27,7 @@ module.exports = ip_filter;
  * - `filterBlacklist` error message thrown downstream indicating that client should be non-permanently blacklisted for `duration` ['IP_FILTER_BLACKLIST']
  * - `filterBlacklistPermanent` error message thrown downstream indicating that client should be permanently blacklisted ['IP_FILTER_BLACKLIST_PERMANENT']
  * - `throw` throw for client ip found on blacklist  [true]
+ * - `log` logging function to receive error message [(ctx, msg) => ()]
  *
  * @param {Object} opts
  * @return {Function}

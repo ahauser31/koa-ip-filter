@@ -572,8 +572,7 @@ describe('ip filtering middleware', function() {
       
       done();
     });
-    
-    
+
     it('should log out correct error message', function(done) {
       db.set('ipFilter:127.0.0.1', -1, (err, tReply) => {
         if (err) throw('Database error');

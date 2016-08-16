@@ -39,6 +39,7 @@ console.log('listening on port 3000');
 ## Options
  
  - `db` redis connection instance
+ - `ip` ip to compare requests (can be changed to use value other than client ip) [`(ctx) => (return ctx.ip)`]
  - `duration` blacklist duration in milliseconds [86400000 (=24 hours)]
  - `errorMsgPermanent` text in body of error response for permanent blacklisting [`'Permanently blacklisted'`]
  - `errorMsgRetry` text in body of error response for limited blacklisting (limited for `duration`) [`'Blacklisted, retry in '`]
@@ -50,6 +51,7 @@ console.log('listening on port 3000');
  - `filterBlacklist` error message thrown downstream indicating that client should be non-permanently blacklisted for `duration` [`'IP_FILTER_BLACKLIST'`]
  - `filterBlacklistPermanent` error message thrown downstream indicating that client should be permanently blacklisted [`'IP_FILTER_BLACKLIST_PERMANENT'`]
  - `throw` throw for client ip found on blacklist  [true]
+ - `log` logging function to receive error message [`(ctx, msg) => ()`]
 
 ## Responses
 
