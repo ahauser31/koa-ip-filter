@@ -77,7 +77,7 @@ X-Retry-After: 60000
 Date: Wed, 13 Nov 2013 21:21:48 GMT
 Connection: keep-alive
 
-Rate limit exceeded, retry in 1 minute
+Blacklisted, retry in 1 minute
 ```
 
 ## License
