@@ -547,51 +547,48 @@ describe('ip filtering middleware', function() {
     });
     
   });
+  
+  describe('logging function', function() {
+    var app, logMsg, logStatus;
 
+    beforeEach(function(done) {
+      app = new Koa();
+      logMsg = null;
+      logStatus = 500;
 
-  //describe('errorMsg', function (done) {
-  //  it('should allow using a custom error body message using the `errorMsg` value', function (done) {
-  //    var app = new Koa();
-  //
-  //    app.use(ratelimit({
-  //      db: db,
-  //      max: 1,
-  //      errorMsg: 'Exceeded limit, retry in '
-  //    }));
-  //
-  //    request(app.listen())
-  //      .get('/')
-  //      .expect(429)
-  //      .expect(function(res) {
-  //        res.text.should.startWith('Exceeded limit, retry in');
-  //        res.text.should.not.startWith('Rate limit exceeded, retry in');
-  //      })
-  //      .end(done);
-  //  });
-  //});
-  //
-  //describe('custom headers', function() {
-  //  it('should allow specifying a custom header names', function(done) {
-  //    var app = new Koa();
-  //
-  //    app.use(ratelimit({
-  //      db: db,
-  //      max: 1,
-  //      headers: {
-  //        remaining: 'Rate-Limit-Remaining',
-  //        reset: 'Rate-Limit-Reset',
-  //        total: 'Rate-Limit-Total'
-  //      }
-  //    }));
-  //
-  //    request(app.listen())
-  //      .get('/')
-  //      .set('foo', 'bar')
-  //      .expect(function(res) {
-  //        res.headers.should.containEql('rate-limit-remaining', 'rate-limit-reset', 'rate-limit-total');
-  //        res.headers.should.not.containEql('x-ratelimit-limit', 'x-ratelimit-remaining', 'x-ratelimit-reset');
-  //      })
-  //      .end(done);
-  //  });
-  //});
+      app.use(ip_filter({
+        db: db,
+        errorMsgPermanent: 'ERROR_BLACKLIST_PERMANENT',
+        appendRetryTime: false,
+        throw: false,
+        ip: function(ctx) {return '127.0.0.1'},
+        log: function(ctx, msg) { logMsg = msg; logStatus = ctx.status; }
+      }));
+  
+      
+      app.use(function (ctx, next) {
+        ctx.body = 'Not blocked!';
+      });
+      
+      done();
+    });
+    
+    
+    it('should log out correct error message', function(done) {
+      db.set('ipFilter:127.0.0.1', -1, (err, tReply) => {
+        if (err) throw('Database error');
+        
+        request(app.listen())
+          .get('/')
+          .expect( (res) => {
+            res.status.should.equal(403);
+            logMsg.should.equal('ERROR_BLACKLIST_PERMANENT');
+            logStatus.should.equal(403);
+          })
+          .end(done);
+      });
+    });
+    
+  });
+
 });

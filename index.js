@@ -113,6 +113,8 @@ function ip_filter(opts) {
         ctx.status = 403;
         ctx.body = opts.errorMsgPermanent;
         
+        if (opts.log) opts.log(ctx, opts.errorMsgPermanent);
+        
         if (opts.throw) ctx.throw(ctx.status, ctx.body);
         return; 
       }
@@ -125,6 +127,9 @@ function ip_filter(opts) {
       
       ctx.status = 401;
       ctx.body = opts.errorMsgRetry + (opts.appendRetryTime ? ms(retryTime, { long: true }) : '');
+      
+      if (opts.log) opts.log(ctx, opts.errorMsgRetry);
+      
       if (opts.throw) ctx.throw(ctx.status, ctx.body, { headers: opts.setHeader ? headers : [] });
     }
     
